@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>訓練成效評估 | POST-TRAINING EVALUATION</title>
+  <title>115年戰鬥傷患救護教材整合訓練成效評估 | POST-TRAINING EVALUATION</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
@@ -63,26 +63,13 @@
       font-size: 26px; color: var(--g-bright);
     }
     .hdr-text h1 {
-      font-family: 'Oswald', sans-serif; font-size: 26px; font-weight: 700;
+      font-family: 'Oswald', sans-serif; font-size: 28px; font-weight: 700;
       letter-spacing: 4px; color: var(--cream);
     }
     .hdr-text .en {
-      font-family: 'Oswald', sans-serif; font-size: 9px;
+      font-family: 'Oswald', sans-serif; font-size: 11px;
       letter-spacing: 6px; color: var(--g-accent); margin-top: 5px;
     }
-    .stats { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--border); }
-    .stat {
-      padding: 11px 8px; text-align: center;
-      background: linear-gradient(180deg, var(--bg-sec) 0%, var(--bg-card) 100%);
-      border-right: 1px solid var(--border);
-    }
-    .stat:last-child { border-right: none; }
-    .stat .sl { font-size: 8px; letter-spacing: 2px; color: var(--text-dim); display: block; margin-bottom: 4px; }
-    .stat .sv {
-      font-family: 'Oswald', sans-serif; font-size: 24px; font-weight: 600; color: var(--cream);
-      display: flex; align-items: center; justify-content: center; gap: 5px;
-    }
-    .stat .si { font-size: 14px; color: var(--g-accent); }
 
     /* ─── INFO CARD ────────────────────────────── */
     .info-card {
@@ -91,21 +78,21 @@
       padding: 18px 22px; margin-bottom: 14px;
     }
     .card-tag {
-      font-family: 'Oswald', sans-serif; font-size: 9px;
+      font-family: 'Oswald', sans-serif; font-size: 11px;
       letter-spacing: 4px; color: var(--text-dim); margin-bottom: 14px;
       display: flex; align-items: center; gap: 10px;
     }
     .card-tag::after { content: ''; flex: 1; height: 1px; background: var(--border); }
     .frow { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .fwrap label { display: block; font-size: 10px; letter-spacing: 1px; color: var(--text-dim); margin-bottom: 7px; }
+    .fwrap label { display: block; font-size: 13px; letter-spacing: 1px; color: var(--text-dim); margin-bottom: 7px; }
     .fwrap label em { color: var(--g-accent); font-style: normal; margin-right: 4px; }
     .req { color: #c06060; margin-left: 2px; }
 
     input[type="text"].fi, select.fi {
       width: 100%; background: var(--bg-input);
       border: 1px solid var(--border); border-bottom: 2px solid var(--border-a);
-      color: var(--text-main); padding: 10px 13px;
-      font-family: inherit; font-size: 14px;
+      color: var(--text-main); padding: 11px 14px;
+      font-family: inherit; font-size: 16px;
       outline: none; appearance: none; -webkit-appearance: none;
       transition: border-color .2s, background .2s;
     }
@@ -142,11 +129,11 @@
       clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
       display: flex; align-items: center; justify-content: center; font-size: 14px;
     }
-    .outline-hd-txt .on { font-family: 'Oswald', sans-serif; font-size: 9px; letter-spacing: 3px; color: var(--gold); }
-    .outline-hd-txt .ot { font-size: 14px; font-weight: 600; color: var(--cream); letter-spacing: 1px; }
+    .outline-hd-txt .on { font-family: 'Oswald', sans-serif; font-size: 11px; letter-spacing: 3px; color: var(--gold); }
+    .outline-hd-txt .ot { font-size: 16px; font-weight: 600; color: var(--cream); letter-spacing: 1px; }
     .outline-body {
       padding: 14px 20px;
-      font-size: 13px; line-height: 1.9; color: var(--text-main);
+      font-size: 15px; line-height: 1.9; color: var(--text-main);
       white-space: pre-wrap;
       border-left: 2px solid rgba(192,152,56,.25);
       margin-left: 18px;
@@ -165,21 +152,21 @@
       clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
       display: flex; align-items: center; justify-content: center; font-size: 14px;
     }
-    .sec-hd-txt .sn { font-family: 'Oswald', sans-serif; font-size: 9px; letter-spacing: 3px; color: var(--g-accent); }
-    .sec-hd-txt .st { font-size: 15px; font-weight: 600; color: var(--cream); letter-spacing: 1px; }
+    .sec-hd-txt .sn { font-family: 'Oswald', sans-serif; font-size: 11px; letter-spacing: 3px; color: var(--g-accent); }
+    .sec-hd-txt .st { font-size: 17px; font-weight: 600; color: var(--cream); letter-spacing: 1px; }
     .sec-bd { padding: 18px 22px; }
 
     .rhint {
-      font-size: 11px; color: var(--text-dim);
+      font-size: 13px; color: var(--text-dim);
       background: var(--bg-sec); border-left: 2px solid var(--g-mid);
-      padding: 7px 12px; margin-bottom: 18px; letter-spacing: .5px;
+      padding: 8px 13px; margin-bottom: 18px; letter-spacing: .5px;
     }
 
     /* ─── QUESTION ─────────────────────────────── */
     .q { margin-bottom: 22px; padding-bottom: 20px; border-bottom: 1px dashed var(--border); }
     .q:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
-    .qt { font-size: 14px; line-height: 1.8; color: var(--text-main); margin-bottom: 12px; }
-    .qn { font-family: 'Oswald', sans-serif; color: var(--g-accent); margin-right: 5px; font-size: 15px; }
+    .qt { font-size: 16px; line-height: 1.8; color: var(--text-main); margin-bottom: 14px; }
+    .qn { font-family: 'Oswald', sans-serif; color: var(--g-accent); margin-right: 5px; font-size: 17px; }
 
     /* ─── RATING BUTTONS 1–5 ───────────────────── */
     .rv { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -190,8 +177,8 @@
       background: var(--bg-sec); border: 1px solid var(--border);
       cursor: pointer; transition: all .15s; user-select: none;
     }
-    .rb .rn { font-family: 'Oswald', sans-serif; font-size: 22px; font-weight: 600; line-height: 1; color: var(--text-main); }
-    .rb .rd { font-size: 8px; color: var(--text-dim); margin-top: 3px; white-space: nowrap; }
+    .rb .rn { font-family: 'Oswald', sans-serif; font-size: 24px; font-weight: 600; line-height: 1; color: var(--text-main); }
+    .rb .rd { font-size: 10px; color: var(--text-dim); margin-top: 4px; white-space: nowrap; }
     .rv input[type="radio"]:checked + .rb { background: var(--g-mid); border: 2px solid var(--g-accent); }
     .rv input[type="radio"]:checked + .rb .rn { color: var(--cream); }
     .rv input[type="radio"]:checked + .rb .rd { color: var(--text-a); }
@@ -201,9 +188,9 @@
     .av { display: flex; flex-wrap: wrap; gap: 8px; }
     .av input[type="radio"] { display: none; }
     .ab {
-      padding: 9px 15px;
+      padding: 10px 17px;
       background: var(--bg-sec); border: 1px solid var(--border);
-      cursor: pointer; font-size: 12px; letter-spacing: .5px;
+      cursor: pointer; font-size: 15px; letter-spacing: .5px;
       transition: all .15s; user-select: none; color: var(--text-main); white-space: nowrap;
     }
     .av input[type="radio"]:checked + .ab { background: var(--g-mid); border: 2px solid var(--g-accent); color: var(--cream); }
@@ -213,13 +200,13 @@
     textarea.ti {
       width: 100%; background: var(--bg-input);
       border: 1px solid var(--border); border-bottom: 2px solid var(--border-a);
-      color: var(--text-main); padding: 11px 14px;
-      font-family: inherit; font-size: 13px;
-      resize: vertical; min-height: 88px; outline: none; line-height: 1.7;
+      color: var(--text-main); padding: 12px 14px;
+      font-family: inherit; font-size: 15px;
+      resize: vertical; min-height: 96px; outline: none; line-height: 1.7;
       transition: border-color .2s, background .2s;
     }
     textarea.ti:focus { border-color: var(--g-accent); background: rgba(83,102,64,.06); }
-    textarea.ti::placeholder { color: var(--text-dim); font-size: 12px; }
+    textarea.ti::placeholder { color: var(--text-dim); font-size: 14px; }
 
     /* ─── SUBMIT ───────────────────────────────── */
     .sub-wrap { text-align: center; padding: 28px 0 6px; }
@@ -245,8 +232,8 @@
       padding: 13px 22px; margin-top: 8px;
       display: flex; justify-content: space-between; align-items: center;
     }
-    .ftr-motto { font-size: 11px; color: var(--text-dim); font-style: italic; letter-spacing: 1px; }
-    .ftr-unit { font-family: 'Oswald', sans-serif; font-size: 11px; letter-spacing: 2.5px; color: var(--g-accent); }
+    .ftr-motto { font-size: 13px; color: var(--text-dim); font-style: italic; letter-spacing: 1px; }
+    .ftr-unit { font-family: 'Oswald', sans-serif; font-size: 13px; letter-spacing: 2.5px; color: var(--g-accent); }
 
     /* ─── TOAST ────────────────────────────────── */
     .toast {
@@ -272,12 +259,10 @@
 
     /* ─── RESPONSIVE ───────────────────────────── */
     @media (max-width: 500px) {
-      .hdr-text h1 { font-size: 21px; letter-spacing: 3px; }
-      .stats { grid-template-columns: repeat(2, 1fr); }
-      .stat:nth-child(2) { border-right: none; }
+      .hdr-text h1 { font-size: 22px; letter-spacing: 3px; }
       .frow { grid-template-columns: 1fr; }
-      .rb { width: 50px; height: 50px; }
-      .rb .rn { font-size: 19px; }
+      .rb { width: 52px; height: 52px; }
+      .rb .rn { font-size: 21px; }
       .sub-btn { padding: 13px 36px; letter-spacing: 3px; }
       .ftr { flex-direction: column; gap: 7px; text-align: center; }
     }
@@ -294,12 +279,6 @@
         <h1>訓練成效評估</h1>
         <div class="en">POST-TRAINING EVALUATION FORM</div>
       </div>
-    </div>
-    <div class="stats">
-      <div class="stat"><span class="sl">評估章節</span><div class="sv"><span class="si">▣</span>4</div></div>
-      <div class="stat"><span class="sl">評估題項</span><div class="sv"><span class="si">◎</span>10</div></div>
-      <div class="stat"><span class="sl">評分標準</span><div class="sv"><span class="si">★</span>5</div></div>
-      <div class="stat"><span class="sl">完成時間</span><div class="sv"><span class="si">◷</span>5'</div></div>
     </div>
   </header>
 
@@ -514,14 +493,23 @@ let coursesData = []; // [{date: 'yyyy/MM/dd', outline: '...'}]
   const sel    = document.getElementById('courseDate');
   const cbName = '_gc_' + Date.now();
 
+  // 10 秒逾時：若 GAS 未回應則提示錯誤
+  const tid = setTimeout(() => {
+    if (window[cbName]) {
+      sel.innerHTML = '<option value="">— 載入逾時，請確認 GAS 已部署並重新整理 —</option>';
+      delete window[cbName];
+    }
+  }, 10000);
+
   window[cbName] = function(data) {
+    clearTimeout(tid);
     sel.innerHTML = '';
     if (data.success && data.courses.length > 0) {
       coursesData = data.courses;
       sel.appendChild(new Option('— 請選擇課程日期 —', ''));
       data.courses.forEach(c => sel.appendChild(new Option(c.date, c.date)));
     } else {
-      sel.innerHTML = '<option value="">— 目前無可用日期 —</option>';
+      sel.innerHTML = '<option value="">— 工作表1 尚無課程資料 —</option>';
     }
     delete window[cbName];
     s.remove();
@@ -529,7 +517,8 @@ let coursesData = []; // [{date: 'yyyy/MM/dd', outline: '...'}]
 
   const s = document.createElement('script');
   s.onerror = () => {
-    sel.innerHTML = '<option value="">— 載入失敗，請重新整理頁面 —</option>';
+    clearTimeout(tid);
+    sel.innerHTML = '<option value="">— 連線失敗，請重新整理頁面 —</option>';
     delete window[cbName];
   };
   s.src = GAS_URL + '?action=getCourseInfo&callback=' + cbName;
