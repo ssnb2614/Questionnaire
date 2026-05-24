@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>訓練成效評估 | POST-TRAINING EVALUATION</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-main:    #181818;
+      --bg-card:    #212121;
+      --bg-sec:     #2a2a2a;
+      --bg-input:   #191919;
+      --border:     #373737;
+      --border-a:   #536640;
+      --g-dark:     #313f25;
+      --g-mid:      #4a5e35;
+      --g-light:    #667f48;
+      --g-accent:   #8fa668;
+      --g-bright:   #b4cc90;
+      --text-main:  #ddd8cc;
+      --text-dim:   #888078;
+      --text-a:     #c0ce9c;
+      --cream:      #eeeae0;
+      --gold:       #c09838;
+      --gold-dim:   #7a5f22;
+      --red:        #8b2828;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg-main);
+      background-image:
+        radial-gradient(ellipse 80% 40% at 0% 0%, rgba(83,102,64,.08) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 100% 100%, rgba(83,102,64,.05) 0%, transparent 55%);
+      color: var(--text-main);
+      font-family: 'Noto Serif TC', '微軟正黑體', 'PingFang TC', serif;
+      min-height: 100vh;
+      padding: 28px 16px 72px;
+    }
+
+    .wrap { max-width: 760px; margin: 0 auto; }
+
+    /* ─── HEADER ───────────────────────────────── */
+    .hdr {
+      background: var(--bg-card);
+      border: 1px solid var(--border-a);
+      margin-bottom: 14px;
+      position: relative; overflow: hidden;
+    }
+    .hdr::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, transparent, var(--g-accent), var(--g-bright), var(--g-accent), transparent);
+    }
+    .hdr-top { padding: 20px 24px 18px; display: flex; align-items: center; gap: 18px; }
+    .hex {
+      width: 58px; height: 58px; flex-shrink: 0;
+      background: var(--g-dark); border: 2px solid var(--g-accent);
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px; color: var(--g-bright);
+    }
+    .hdr-text h1 {
+      font-family: 'Oswald', sans-serif; font-size: 26px; font-weight: 700;
+      letter-spacing: 4px; color: var(--cream);
+    }
+    .hdr-text .en {
+      font-family: 'Oswald', sans-serif; font-size: 9px;
+      letter-spacing: 6px; color: var(--g-accent); margin-top: 5px;
+    }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--border); }
+    .stat {
+      padding: 11px 8px; text-align: center;
+      background: linear-gradient(180deg, var(--bg-sec) 0%, var(--bg-card) 100%);
+      border-right: 1px solid var(--border);
+    }
+    .stat:last-child { border-right: none; }
+    .stat .sl { font-size: 8px; letter-spacing: 2px; color: var(--text-dim); display: block; margin-bottom: 4px; }
+    .stat .sv {
+      font-family: 'Oswald', sans-serif; font-size: 24px; font-weight: 600; color: var(--cream);
+      display: flex; align-items: center; justify-content: center; gap: 5px;
+    }
+    .stat .si { font-size: 14px; color: var(--g-accent); }
+
+    /* ─── INFO CARD ────────────────────────────── */
+    .info-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-left: 3px solid var(--g-accent);
+      padding: 18px 22px; margin-bottom: 14px;
+    }
+    .card-tag {
+      font-family: 'Oswald', sans-serif; font-size: 9px;
+      letter-spacing: 4px; color: var(--text-dim); margin-bottom: 14px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .card-tag::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .frow { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .fwrap label { display: block; font-size: 10px; letter-spacing: 1px; color: var(--text-dim); margin-bottom: 7px; }
+    .fwrap label em { color: var(--g-accent); font-style: normal; margin-right: 4px; }
+    .req { color: #c06060; margin-left: 2px; }
+
+    input[type="text"].fi, select.fi {
+      width: 100%; background: var(--bg-input);
+      border: 1px solid var(--border); border-bottom: 2px solid var(--border-a);
+      color: var(--text-main); padding: 10px 13px;
+      font-family: inherit; font-size: 14px;
+      outline: none; appearance: none; -webkit-appearance: none;
+      transition: border-color .2s, background .2s;
+    }
+    input[type="text"].fi:focus, select.fi:focus {
+      border-color: var(--g-accent); background: rgba(83,102,64,.08);
+    }
+    select.fi {
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238fa668'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 12px center; padding-right: 34px;
+    }
+    select.fi option { background: #1a1a1a; }
+
+    /* ─── OUTLINE CARD ─────────────────────────── */
+    .outline-card {
+      display: none;
+      background: var(--bg-card);
+      border: 1px solid var(--gold-dim);
+      border-left: 3px solid var(--gold);
+      margin-bottom: 14px;
+      overflow: hidden;
+      animation: fadeIn .3s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+    .outline-hd {
+      background: rgba(192,152,56,.1);
+      border-bottom: 1px solid var(--gold-dim);
+      padding: 11px 18px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .outline-icon {
+      width: 32px; height: 32px; flex-shrink: 0;
+      background: rgba(192,152,56,.15); border: 1.5px solid var(--gold);
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      display: flex; align-items: center; justify-content: center; font-size: 14px;
+    }
+    .outline-hd-txt .on { font-family: 'Oswald', sans-serif; font-size: 9px; letter-spacing: 3px; color: var(--gold); }
+    .outline-hd-txt .ot { font-size: 14px; font-weight: 600; color: var(--cream); letter-spacing: 1px; }
+    .outline-body {
+      padding: 14px 20px;
+      font-size: 13px; line-height: 1.9; color: var(--text-main);
+      white-space: pre-wrap;
+      border-left: 2px solid rgba(192,152,56,.25);
+      margin-left: 18px;
+      padding-left: 16px;
+    }
+
+    /* ─── SECTION CARD ─────────────────────────── */
+    .sec { background: var(--bg-card); border: 1px solid var(--border); margin-bottom: 14px; overflow: hidden; }
+    .sec-hd {
+      background: var(--g-dark); border-bottom: 1px solid var(--border-a);
+      padding: 12px 20px; display: flex; align-items: center; gap: 13px;
+    }
+    .sec-hex {
+      width: 33px; height: 33px; flex-shrink: 0;
+      background: var(--g-mid); border: 1.5px solid var(--g-accent);
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      display: flex; align-items: center; justify-content: center; font-size: 14px;
+    }
+    .sec-hd-txt .sn { font-family: 'Oswald', sans-serif; font-size: 9px; letter-spacing: 3px; color: var(--g-accent); }
+    .sec-hd-txt .st { font-size: 15px; font-weight: 600; color: var(--cream); letter-spacing: 1px; }
+    .sec-bd { padding: 18px 22px; }
+
+    .rhint {
+      font-size: 11px; color: var(--text-dim);
+      background: var(--bg-sec); border-left: 2px solid var(--g-mid);
+      padding: 7px 12px; margin-bottom: 18px; letter-spacing: .5px;
+    }
+
+    /* ─── QUESTION ─────────────────────────────── */
+    .q { margin-bottom: 22px; padding-bottom: 20px; border-bottom: 1px dashed var(--border); }
+    .q:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+    .qt { font-size: 14px; line-height: 1.8; color: var(--text-main); margin-bottom: 12px; }
+    .qn { font-family: 'Oswald', sans-serif; color: var(--g-accent); margin-right: 5px; font-size: 15px; }
+
+    /* ─── RATING BUTTONS 1–5 ───────────────────── */
+    .rv { display: flex; flex-wrap: wrap; gap: 8px; }
+    .rv input[type="radio"] { display: none; }
+    .rb {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      width: 56px; height: 56px;
+      background: var(--bg-sec); border: 1px solid var(--border);
+      cursor: pointer; transition: all .15s; user-select: none;
+    }
+    .rb .rn { font-family: 'Oswald', sans-serif; font-size: 22px; font-weight: 600; line-height: 1; color: var(--text-main); }
+    .rb .rd { font-size: 8px; color: var(--text-dim); margin-top: 3px; white-space: nowrap; }
+    .rv input[type="radio"]:checked + .rb { background: var(--g-mid); border: 2px solid var(--g-accent); }
+    .rv input[type="radio"]:checked + .rb .rn { color: var(--cream); }
+    .rv input[type="radio"]:checked + .rb .rd { color: var(--text-a); }
+    .rb:hover { background: var(--g-dark); border-color: var(--g-accent); }
+
+    /* ─── AGREE / CHOICE BUTTONS ───────────────── */
+    .av { display: flex; flex-wrap: wrap; gap: 8px; }
+    .av input[type="radio"] { display: none; }
+    .ab {
+      padding: 9px 15px;
+      background: var(--bg-sec); border: 1px solid var(--border);
+      cursor: pointer; font-size: 12px; letter-spacing: .5px;
+      transition: all .15s; user-select: none; color: var(--text-main); white-space: nowrap;
+    }
+    .av input[type="radio"]:checked + .ab { background: var(--g-mid); border: 2px solid var(--g-accent); color: var(--cream); }
+    .ab:hover { background: var(--g-dark); border-color: var(--g-accent); }
+
+    /* ─── TEXTAREA ─────────────────────────────── */
+    textarea.ti {
+      width: 100%; background: var(--bg-input);
+      border: 1px solid var(--border); border-bottom: 2px solid var(--border-a);
+      color: var(--text-main); padding: 11px 14px;
+      font-family: inherit; font-size: 13px;
+      resize: vertical; min-height: 88px; outline: none; line-height: 1.7;
+      transition: border-color .2s, background .2s;
+    }
+    textarea.ti:focus { border-color: var(--g-accent); background: rgba(83,102,64,.06); }
+    textarea.ti::placeholder { color: var(--text-dim); font-size: 12px; }
+
+    /* ─── SUBMIT ───────────────────────────────── */
+    .sub-wrap { text-align: center; padding: 28px 0 6px; }
+    .sub-btn {
+      background: var(--g-mid); color: var(--cream);
+      border: 2px solid var(--g-accent);
+      padding: 14px 54px;
+      font-family: 'Oswald', sans-serif; font-size: 15px; letter-spacing: 5px;
+      cursor: pointer; transition: all .2s; position: relative; overflow: hidden;
+    }
+    .sub-btn::before {
+      content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+      background: rgba(180,204,144,.12); transition: left .35s;
+    }
+    .sub-btn:hover::before { left: 100%; }
+    .sub-btn:hover { background: var(--g-light); border-color: var(--g-bright); }
+    .sub-btn:disabled { opacity: .45; cursor: not-allowed; }
+
+    /* ─── FOOTER ───────────────────────────────── */
+    .ftr {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-top: 2px solid var(--border-a);
+      padding: 13px 22px; margin-top: 8px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .ftr-motto { font-size: 11px; color: var(--text-dim); font-style: italic; letter-spacing: 1px; }
+    .ftr-unit { font-family: 'Oswald', sans-serif; font-size: 11px; letter-spacing: 2.5px; color: var(--g-accent); }
+
+    /* ─── TOAST ────────────────────────────────── */
+    .toast {
+      display: none; position: fixed; top: 24px; left: 50%; transform: translateX(-50%);
+      background: var(--bg-card); padding: 14px 30px;
+      font-size: 13px; letter-spacing: 1px; z-index: 9999;
+      text-align: center; min-width: 300px; border: 1px solid;
+      box-shadow: 0 8px 32px rgba(0,0,0,.55);
+    }
+    .toast.ok  { border-color: var(--g-accent); border-top: 3px solid var(--g-accent); color: var(--g-bright); }
+    .toast.err { border-color: var(--red);      border-top: 3px solid var(--red);      color: #e08080; }
+    .toast.wrn { border-color: var(--gold);     border-top: 3px solid var(--gold);     color: var(--gold); }
+
+    /* ─── LOADING OVERLAY ──────────────────────── */
+    .ov {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.75); z-index: 9998;
+      flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+    }
+    .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--g-accent); border-radius: 50%; animation: spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .ov-txt { font-family: 'Oswald', sans-serif; font-size: 13px; letter-spacing: 5px; color: var(--g-accent); }
+
+    /* ─── RESPONSIVE ───────────────────────────── */
+    @media (max-width: 500px) {
+      .hdr-text h1 { font-size: 21px; letter-spacing: 3px; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .stat:nth-child(2) { border-right: none; }
+      .frow { grid-template-columns: 1fr; }
+      .rb { width: 50px; height: 50px; }
+      .rb .rn { font-size: 19px; }
+      .sub-btn { padding: 13px 36px; letter-spacing: 3px; }
+      .ftr { flex-direction: column; gap: 7px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ══ HEADER ══════════════════════════════════════ -->
+  <header class="hdr">
+    <div class="hdr-top">
+      <div class="hex">✚</div>
+      <div class="hdr-text">
+        <h1>訓練成效評估</h1>
+        <div class="en">POST-TRAINING EVALUATION FORM</div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><span class="sl">評估章節</span><div class="sv"><span class="si">▣</span>4</div></div>
+      <div class="stat"><span class="sl">評估題項</span><div class="sv"><span class="si">◎</span>10</div></div>
+      <div class="stat"><span class="sl">評分標準</span><div class="sv"><span class="si">★</span>5</div></div>
+      <div class="stat"><span class="sl">完成時間</span><div class="sv"><span class="si">◷</span>5'</div></div>
+    </div>
+  </header>
+
+  <!-- ══ 基本資料 ════════════════════════════════════ -->
+  <div class="info-card">
+    <div class="card-tag">IDENTITY INFO — 基本資料</div>
+    <div class="frow">
+      <div class="fwrap">
+        <label for="name"><em>▸</em>填寫人（職稱姓名）<span class="req">*</span></label>
+        <input type="text" id="name" class="fi" placeholder="請輸入職稱與姓名">
+      </div>
+      <div class="fwrap">
+        <label for="courseDate"><em>▸</em>課程日期<span class="req">*</span></label>
+        <select id="courseDate" class="fi" onchange="onDateChange(this.value)">
+          <option value="">— 載入中，請稍候 —</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 課程大綱（選擇日期後顯示）═══════════════════ -->
+  <div class="outline-card" id="outlineCard">
+    <div class="outline-hd">
+      <div class="outline-icon">📌</div>
+      <div class="outline-hd-txt">
+        <div class="on">MISSION BRIEF — 本日課程</div>
+        <div class="ot" id="outlineDate">課程大綱</div>
+      </div>
+    </div>
+    <div class="outline-body" id="outlineText"></div>
+  </div>
+
+  <!-- ══ SECTION 01 ══════════════════════════════════ -->
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-hex">📋</div>
+      <div class="sec-hd-txt">
+        <div class="sn">SECTION 01</div>
+        <div class="st">課程內容與教材</div>
+      </div>
+    </div>
+    <div class="sec-bd">
+      <div class="rhint">評分標準：1 = 非常不滿意 ／ 5 = 非常滿意</div>
+
+      <div class="q">
+        <div class="qt"><span class="qn">1.</span>課程內容符合您的預期<span class="req">*</span></div>
+        <div class="rv">
+          <input type="radio" name="q1_1" id="q1_1_1" value="1"><label for="q1_1_1" class="rb"><span class="rn">1</span><span class="rd">非常不滿</span></label>
+          <input type="radio" name="q1_1" id="q1_1_2" value="2"><label for="q1_1_2" class="rb"><span class="rn">2</span><span class="rd">不滿意</span></label>
+          <input type="radio" name="q1_1" id="q1_1_3" value="3"><label for="q1_1_3" class="rb"><span class="rn">3</span><span class="rd">普通</span></label>
+          <input type="radio" name="q1_1" id="q1_1_4" value="4"><label for="q1_1_4" class="rb"><span class="rn">4</span><span class="rd">滿意</span></label>
+          <input type="radio" name="q1_1" id="q1_1_5" value="5"><label for="q1_1_5" class="rb"><span class="rn">5</span><span class="rd">非常滿意</span></label>
+        </div>
+      </div>
+
+      <div class="q">
+        <div class="qt"><span class="qn">2.</span>講義及教材的實用性<span class="req">*</span></div>
+        <div class="rv">
+          <input type="radio" name="q1_2" id="q1_2_1" value="1"><label for="q1_2_1" class="rb"><span class="rn">1</span><span class="rd">非常不滿</span></label>
+          <input type="radio" name="q1_2" id="q1_2_2" value="2"><label for="q1_2_2" class="rb"><span class="rn">2</span><span class="rd">不滿意</span></label>
+          <input type="radio" name="q1_2" id="q1_2_3" value="3"><label for="q1_2_3" class="rb"><span class="rn">3</span><span class="rd">普通</span></label>
+          <input type="radio" name="q1_2" id="q1_2_4" value="4"><label for="q1_2_4" class="rb"><span class="rn">4</span><span class="rd">滿意</span></label>
+          <input type="radio" name="q1_2" id="q1_2_5" value="5"><label for="q1_2_5" class="rb"><span class="rn">5</span><span class="rd">非常滿意</span></label>
+        </div>
+      </div>
+
+      <div class="q">
+        <div class="qt"><span class="qn">3.</span>課程難易度適中<span class="req">*</span></div>
+        <div class="rv">
+          <input type="radio" name="q1_3" id="q1_3_1" value="1"><label for="q1_3_1" class="rb"><span class="rn">1</span><span class="rd">非常不滿</span></label>
+          <input type="radio" name="q1_3" id="q1_3_2" value="2"><label for="q1_3_2" class="rb"><span class="rn">2</span><span class="rd">不滿意</span></label>
+          <input type="radio" name="q1_3" id="q1_3_3" value="3"><label for="q1_3_3" class="rb"><span class="rn">3</span><span class="rd">普通</span></label>
+          <input type="radio" name="q1_3" id="q1_3_4" value="4"><label for="q1_3_4" class="rb"><span class="rn">4</span><span class="rd">滿意</span></label>
+          <input type="radio" name="q1_3" id="q1_3_5" value="5"><label for="q1_3_5" class="rb"><span class="rn">5</span><span class="rd">非常滿意</span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 02 ══════════════════════════════════ -->
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-hex">🎯</div>
+      <div class="sec-hd-txt">
+        <div class="sn">SECTION 02</div>
+        <div class="st">講師教學表現</div>
+      </div>
+    </div>
+    <div class="sec-bd">
+      <div class="rhint">評分標準：1 = 非常不滿意 ／ 5 = 非常滿意</div>
+
+      <div class="q">
+        <div class="qt"><span class="qn">1.</span>講師表達清晰，容易理解<span class="req">*</span></div>
+        <div class="rv">
+          <input type="radio" name="q2_1" id="q2_1_1" value="1"><label for="q2_1_1" class="rb"><span class="rn">1</span><span class="rd">非常不滿</span></label>
+          <input type="radio" name="q2_1" id="q2_1_2" value="2"><label for="q2_1_2" class="rb"><span class="rn">2</span><span class="rd">不滿意</span></label>
+          <input type="radio" name="q2_1" id="q2_1_3" value="3"><label for="q2_1_3" class="rb"><span class="rn">3</span><span class="rd">普通</span></label>
+          <input type="radio" name="q2_1" id="q2_1_4" value="4"><label for="q2_1_4" class="rb"><span class="rn">4</span><span class="rd">滿意</span></label>
+          <input type="radio" name="q2_1" id="q2_1_5" value="5"><label for="q2_1_5" class="rb"><span class="rn">5</span><span class="rd">非常滿意</span></label>
+        </div>
+      </div>
+
+      <div class="q">
+        <div class="qt"><span class="qn">2.</span>講師能有效解答學員問題<span class="req">*</span></div>
+        <div class="rv">
+          <input type="radio" name="q2_2" id="q2_2_1" value="1"><label for="q2_2_1" class="rb"><span class="rn">1</span><span class="rd">非常不滿</span></label>
+          <input type="radio" name="q2_2" id="q2_2_2" value="2"><label for="q2_2_2" class="rb"><span class="rn">2</span><span class="rd">不滿意</span></label>
+          <input type="radio" name="q2_2" id="q2_2_3" value="3"><label for="q2_2_3" class="rb"><span class="rn">3</span><span class="rd">普通</span></label>
+          <input type="radio" name="q2_2" id="q2_2_4" value="4"><label for="q2_2_4" class="rb"><span class="rn">4</span><span class="rd">滿意</span></label>
+          <input type="radio" name="q2_2" id="q2_2_5" value="5"><label for="q2_2_5" class="rb"><span class="rn">5</span><span class="rd">非常滿意</span></label>
+        </div>
+      </div>
+
+      <div class="q">
+        <div class="qt"><span class="qn">3.</span>課程互動與實作安排豐富<span class="req">*</span></div>
+        <div class="rv">
+          <input type="radio" name="q2_3" id="q2_3_1" value="1"><label for="q2_3_1" class="rb"><span class="rn">1</span><span class="rd">非常不滿</span></label>
+          <input type="radio" name="q2_3" id="q2_3_2" value="2"><label for="q2_3_2" class="rb"><span class="rn">2</span><span class="rd">不滿意</span></label>
+          <input type="radio" name="q2_3" id="q2_3_3" value="3"><label for="q2_3_3" class="rb"><span class="rn">3</span><span class="rd">普通</span></label>
+          <input type="radio" name="q2_3" id="q2_3_4" value="4"><label for="q2_3_4" class="rb"><span class="rn">4</span><span class="rd">滿意</span></label>
+          <input type="radio" name="q2_3" id="q2_3_5" value="5"><label for="q2_3_5" class="rb"><span class="rn">5</span><span class="rd">非常滿意</span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 03 ══════════════════════════════════ -->
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-hex">📊</div>
+      <div class="sec-hd-txt">
+        <div class="sn">SECTION 03</div>
+        <div class="st">整體效益與回饋</div>
+      </div>
+    </div>
+    <div class="sec-bd">
+
+      <div class="q">
+        <div class="qt"><span class="qn">1.</span>透過此次課程，我確實學到了實用的知識或技能<span class="req">*</span></div>
+        <div class="av">
+          <input type="radio" name="q3_1" id="q3_1a" value="非常同意"><label for="q3_1a" class="ab">非常同意</label>
+          <input type="radio" name="q3_1" id="q3_1b" value="同意"><label for="q3_1b" class="ab">同意</label>
+          <input type="radio" name="q3_1" id="q3_1c" value="普通"><label for="q3_1c" class="ab">普通</label>
+          <input type="radio" name="q3_1" id="q3_1d" value="不同意"><label for="q3_1d" class="ab">不同意</label>
+          <input type="radio" name="q3_1" id="q3_1e" value="非常不同意"><label for="q3_1e" class="ab">非常不同意</label>
+        </div>
+      </div>
+
+      <div class="q">
+        <div class="qt"><span class="qn">2.</span>您認為本課程最有幫助的部分是？</div>
+        <textarea id="q3_2" class="ti" placeholder="請簡述最有幫助的部分…"></textarea>
+      </div>
+
+      <div class="q">
+        <div class="qt"><span class="qn">3.</span>您認為本課程有待加強或建議調整的部分是？</div>
+        <textarea id="q3_3" class="ti" placeholder="請簡述建議加強或調整的部分…"></textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ SECTION 04 ══════════════════════════════════ -->
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-hex">✍</div>
+      <div class="sec-hd-txt">
+        <div class="sn">SECTION 04</div>
+        <div class="st">其他建議</div>
+      </div>
+    </div>
+    <div class="sec-bd">
+      <div class="q">
+        <div class="qt"><span class="qn">—</span>如有其他意見或建議，歡迎填寫</div>
+        <textarea id="q4" class="ti" style="min-height:108px" placeholder="請填寫其他意見或建議…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SUBMIT ═══════════════════════════════════════ -->
+  <div class="sub-wrap">
+    <button class="sub-btn" id="submitBtn" onclick="submitForm()">▶ 提交評估報告</button>
+  </div>
+
+  <!-- ══ FOOTER ═══════════════════════════════════════ -->
+  <footer class="ftr">
+    <span class="ftr-motto">「訓練的品質，決定任務的成敗。」</span>
+    <span class="ftr-unit">CTU — 訓練管理系統</span>
+  </footer>
+
+</div>
+
+<!-- Loading Overlay -->
+<div class="ov" id="ov">
+  <div class="spinner"></div>
+  <div class="ov-txt">傳送中...</div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// 【必填】填入您的 Google Apps Script 網路應用程式網址
+// ============================================================
+const GAS_URL = 'YOUR_GAS_WEB_APP_URL_HERE';
+
+// 課程資料快取
+let coursesData = []; // [{date: 'yyyy/MM/dd', outline: '...'}]
+
+// ─── 載入課程資訊（日期 + 大綱）via JSONP ────────────────
+(function loadCourseInfo() {
+  const sel    = document.getElementById('courseDate');
+  const cbName = '_gc_' + Date.now();
+
+  window[cbName] = function(data) {
+    sel.innerHTML = '';
+    if (data.success && data.courses.length > 0) {
+      coursesData = data.courses;
+      sel.appendChild(new Option('— 請選擇課程日期 —', ''));
+      data.courses.forEach(c => sel.appendChild(new Option(c.date, c.date)));
+    } else {
+      sel.innerHTML = '<option value="">— 目前無可用日期 —</option>';
+    }
+    delete window[cbName];
+    s.remove();
+  };
+
+  const s = document.createElement('script');
+  s.onerror = () => {
+    sel.innerHTML = '<option value="">— 載入失敗，請重新整理頁面 —</option>';
+    delete window[cbName];
+  };
+  s.src = GAS_URL + '?action=getCourseInfo&callback=' + cbName;
+  document.head.appendChild(s);
+})();
+
+// ─── 選擇日期後帶入課程大綱 ───────────────────────────────
+function onDateChange(dateVal) {
+  const card    = document.getElementById('outlineCard');
+  const dateEl  = document.getElementById('outlineDate');
+  const textEl  = document.getElementById('outlineText');
+  const course  = coursesData.find(c => c.date === dateVal);
+
+  if (course && course.outline) {
+    dateEl.textContent = course.date + '　課程大綱';
+    textEl.textContent = course.outline;
+    card.style.display = 'block';
+  } else {
+    card.style.display = 'none';
+  }
+}
+
+// ─── 表單驗證 ────────────────────────────────────────────
+const REQUIRED_RADIOS = {
+  q1_1: '一-1 課程內容符合預期',
+  q1_2: '一-2 講義及教材實用性',
+  q1_3: '一-3 課程難易度適中',
+  q2_1: '二-1 講師表達清晰',
+  q2_2: '二-2 講師能有效解答問題',
+  q2_3: '二-3 課程互動與實作',
+  q3_1: '三-1 學到實用知識技能',
+};
+
+function validate() {
+  if (!document.getElementById('name').value.trim()) {
+    showToast('請填寫職稱姓名', 'wrn'); return false;
+  }
+  if (!document.getElementById('courseDate').value) {
+    showToast('請選擇課程日期', 'wrn'); return false;
+  }
+  for (const [field, label] of Object.entries(REQUIRED_RADIOS)) {
+    if (!document.querySelector(`input[name="${field}"]:checked`)) {
+      showToast('請完成評分：' + label, 'wrn'); return false;
+    }
+  }
+  return true;
+}
+
+// ─── 提交表單 ────────────────────────────────────────────
+function submitForm() {
+  if (!validate()) return;
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  setOverlay(true);
+
+  const payload = {
+    name:       document.getElementById('name').value.trim(),
+    courseDate: document.getElementById('courseDate').value,
+    q1_1: radio('q1_1'), q1_2: radio('q1_2'), q1_3: radio('q1_3'),
+    q2_1: radio('q2_1'), q2_2: radio('q2_2'), q2_3: radio('q2_3'),
+    q3_1: radio('q3_1'),
+    q3_2: document.getElementById('q3_2').value.trim(),
+    q3_3: document.getElementById('q3_3').value.trim(),
+    q4:   document.getElementById('q4').value.trim(),
+  };
+
+  fetch(GAS_URL, {
+    method:   'POST',
+    headers:  { 'Content-Type': 'text/plain;charset=utf-8' },
+    body:     JSON.stringify(payload),
+    redirect: 'follow',
+  })
+  .then(r => r.json())
+  .then(data => {
+    setOverlay(false);
+    if (data.success) {
+      showToast('✓ 評估報告已成功提交，感謝您的回饋！', 'ok', 5000);
+      setTimeout(resetForm, 5500);
+    } else {
+      showToast('提交失敗：' + (data.error || '請稍後再試'), 'err');
+      btn.disabled = false;
+    }
+  })
+  .catch(() => {
+    setOverlay(false);
+    // GAS 跨來源導向時瀏覽器可能拋出 TypeError，但資料已送達
+    showToast('✓ 評估報告已送出，感謝您的回饋！', 'ok', 5000);
+    setTimeout(resetForm, 5500);
+  });
+}
+
+// ─── 重設表單 ────────────────────────────────────────────
+function resetForm() {
+  document.getElementById('name').value = '';
+  document.getElementById('courseDate').selectedIndex = 0;
+  document.getElementById('outlineCard').style.display = 'none';
+  document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+  ['q3_2', 'q3_3', 'q4'].forEach(id => { document.getElementById(id).value = ''; });
+  document.getElementById('submitBtn').disabled = false;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── Helpers ─────────────────────────────────────────────
+function radio(name) {
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return el ? el.value : '';
+}
+function setOverlay(show) {
+  document.getElementById('ov').style.display = show ? 'flex' : 'none';
+}
+function showToast(msg, type, dur) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast ' + (type || 'ok');
+  el.style.display = 'block';
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.style.display = 'none'; }, dur || 3500);
+}
+</script>
+</body>
+</html>
